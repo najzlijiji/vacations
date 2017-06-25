@@ -1,4 +1,4 @@
 # vacations
 example of vacations class
 
-for database import vacations.sql
+for database import vacation.sql
