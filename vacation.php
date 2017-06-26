@@ -271,7 +271,7 @@ class vacation implements vacationModule{
 				END as total 
 				FROM vacations WHERE 
 				start_date>='$from' AND
-				start_date<'2$to' AND
+				start_date<'$to' AND
 				deleted=0 AND 
 				user_id='$userId' AND
 				approved=".self::APPROVED."
