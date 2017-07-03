@@ -11,41 +11,43 @@ use Vacations\Router;
 use Models\Vacation;
 use Models\User;
 
+
+
 if ($_POST){
+	// ideally all this would be routed to API
 	if(isset($_GET['action'])){
 		if($_GET['action']=='requestVacation' || $_GET['action']=='approveVacation' || $_GET['action']=='rejectVacation' || $_GET['action']=='cancelVacation'){
 			$obj = new Vacation;
 			switch ($_GET['action']){
 				case 'requestVacation':
-					$userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
-					$startDate = filter_input(INPUT_POST, 'startDate', FILTER_SANITIZE_STRING);
-					$endDate = filter_input(INPUT_POST, 'endDate', FILTER_SANITIZE_STRING);
+					$userId = filterInt('userId',"POST");
+					$startDate = filterString('startDate',"POST");
+					$endDate = filterString('endDate',"POST");
 					$response = $obj->requestVacation($userId,$startDate,$endDate);
 					break;
 
 				case 'approveVacation':
-					$vacationId = filter_input(INPUT_POST, 'vacationId', FILTER_SANITIZE_NUMBER_INT);
-					$userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+					$vacationId = filterInt('vacationId',"POST");
+					$userId = filterInt('userId',"POST");
 					$response = $obj->approveVacation($vacationId,$userId);
 					break;
 
 				case 'rejectVacation':
-					$vacationId = filter_input(INPUT_POST, 'vacationId', FILTER_SANITIZE_NUMBER_INT);
+					$vacationId = filterInt('vacationId',"POST");
 					$response = $obj->rejectVacation($vacationId);
 					break;
 
 				case 'cancelVacation':
-					$vacationId = filter_input(INPUT_POST, 'vacationId', FILTER_SANITIZE_NUMBER_INT);
-					$userId = filter_input(INPUT_POST, 'userId', FILTER_SANITIZE_NUMBER_INT);
+					$vacationId = filterInt('vacationId',"POST");
+					$userId = filterInt('userId',"POST");
 					$response = $obj->cancelVacation($vacationId,$userId);
 					break;
-
 			}			
 		}
 		if($_GET['action']=='addUser'){
 			$obj = new User;
-			$name = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-			$days = filter_input(INPUT_POST, 'days', FILTER_SANITIZE_NUMBER_INT);
+			$name = filterString('name',"POST");
+			$days = filterInt('days',"POST");
 			$response = $obj->addUser($name,$days);
 		}
 		if($response){
@@ -59,8 +61,8 @@ if ($_POST){
 } 
 
 if (isset($_GET['controller']) && isset($_GET['action'])) {
-    $controller = filter_input(INPUT_GET, 'controller', FILTER_SANITIZE_STRING);
-    $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
+    $controller = filterString('controller',"GET");
+    $action = filterString('action', "GET");
 }
 else {
     $controller = 'vacations';

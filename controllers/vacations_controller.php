@@ -22,33 +22,39 @@ class VacationsController {
 	public function request(){
 		$user = new User;
 		$names = $user->users();
-		require_once("views/vacations/request.php");
+		if(is_null($names)){
+			require_once("views/vacations/no_users.php");
+		}
+		else{			
+			require_once("views/vacations/request.php");
+		}
 	}
 
-	private function renderPage($status){
+	private function renderPage(int $status){
 
 		$vacations = new Vacation;
 		if( isset($_GET['page']) ){
-			$page = filter_input(INPUT_GET, 'page', FILTER_SANITIZE_NUMBER_INT);
-			$offset=($page-1)*10;
-			$vacations->offset=$offset;		
+			$page = filterString('page',"GET");
+			$offset = ($page-1)*10;
+			$vacations->offset = $offset;		
 		}
 		else{
-			$page=1;
+			$page = 1;
 		}
 
 
 		if( isset($_GET['date']) ){
-			$filter = filter_input(INPUT_GET, 'date', FILTER_SANITIZE_STRING);
-			$f=$filter;
-			$filter=explode(',',$filter);
+			$filter = filterString('date', "GET");
+			$f = $filter;
+			$filter = explode(',',$filter);
 			$vacations->initFilter($filter);
 		}
 		else{
-			$f='';
+			$f = '';
 		}
 
-		$data = $vacations->returnVacations($status);
+		$vacations->returnVacations($status);
+		$data = $vacations->data;
 		$pages=ceil($vacations->pages[$status]/10);
 		$pending=$vacations->pages[VacationStatus::PENDING];
 		require_once("views/vacations/".VacationStatus::$statusName[$status].".php");
