@@ -1,41 +1,6 @@
-function load_page(content,page=false,fil=false){
-	$("ul#menu li.active").removeClass("active");
-    $("li#"+content).addClass("active");
-    var p=page?"&page="+page:"";
-    var f=fil?"&date="+fil:"";
-    $("#content").load("action.php?content="+content+p+f,function(responseTxt,statusTxt){
-        if(statusTxt=="success"){
-            window.history.pushState('/index.php?content='+content+p+f, null, '/index.php?content='+content+p+f);
-            document.title=content+" Vacations";
-            if($("#datepicker").length){
-                datePicker();
-                if(f!=""){
-                    var d=fil.split(",");
-                    $("input#from").val(d[0]);
-                    $("input#to").val(d[1]);
-                }
-            }
-        }
-    });
-    if(content=='approve'){
-    	pending_requests();
-    }
-}
-
-function pending_requests(){
-	$.get("action.php?content=pending", function(data,status){
-		if(data>0){
-			$('li#approve span').text(data);
-		}
-		else{
-			$('li#approve span').text('');
-		}
-	})
-}
-
 $(document).ready(function(){
     var urlVars=getUrlVars();
-    if(typeof urlVars['content'] !== 'undefined'){
+    if(typeof urlVars['controller'] !== 'undefined' && urlVars['action'] !== 'undefined'){
         var p='',
             f='';
         if('page' in urlVars){
@@ -44,25 +9,51 @@ $(document).ready(function(){
         if('date' in urlVars){
             f=urlVars['date']?urlVars['date']:"";
         }
-        load_page(urlVars['content'],p,f);
+        load_page(urlVars['controller'],urlVars['action'],p,f);
     }
     else{
-        load_page('approved');
+        load_page('vacations','approved');
     }
-	pending_requests();    
 });
 
-function request_vacation(user_id,start_date,end_date){
-    $.post("action.php?action=addnew",
+function pending_requests(data){
+    if(data>0){
+        $('li#pending span').text(data);
+    }
+    else{
+        $('li#pending span').text('');
+    }
+}
+
+
+function load_page(controller,action,p=false,f=false){
+    $("ul#menu li.active").removeClass("active");
+    $("li#"+action).addClass("active");
+    var p=p?"&page="+p:"";
+    var f=f?"&date="+f:"";
+    $("#content").load('routes.php?controller='+controller+'&action='+action+p+f,function(responseTxt,statusTxt){
+        if(statusTxt=="success"){
+            window.history.pushState('?controller='+controller+'&action='+action+p+f, null, '?controller='+controller+'&action='+action+p+f);
+            document.title=action+" "+controller;
+            if($("#datepicker").length){
+                datePicker();
+            }
+        }
+    });
+    if(action=='pending'){
+    }
+}
+
+function request_vacation(userId,startDate,endDate){
+    $.post("routes.php?action=requestVacation",
     {
-        user_id: user_id,
-        from: start_date,
-        to: end_date
+        userId: userId,
+        startDate: startDate,
+        endDate: endDate
     },
     function(data, status){
-        if(data==true){
-        	pending_requests();
-        	load_page('approved');
+        if(data=='Success'){
+        	load_page('vacations','approved');
         }
         else{
             $("#errortxt").text(data);
@@ -71,16 +62,15 @@ function request_vacation(user_id,start_date,end_date){
     });
 }
 
-function approve_vacation(id,user_id,page){
-    $.post("action.php?action=vacationApprove",
+function approve_vacation(vacationId,userId,page){
+    $.post("routes.php?action=approveVacation",
     {
-        id: id,
-        user_id: user_id
+        vacationId: vacationId,
+        userId: userId
     },
     function(data, status){
-        if(data==true){
-        	pending_requests();
-            load_page('approve',page)
+        if(data=='Success'){
+            load_page('vacations','approved',page);
         }
         else{
             $("#errortxt").text(data);
@@ -89,31 +79,29 @@ function approve_vacation(id,user_id,page){
     });
 }
 
-function reject_vacation(id){
+function reject_vacation(vacationId){
 
-    $.post("action.php?action=vacationReject",
+    $.post("routes.php?action=rejectVacation",
     {
-        id: id
+        vacationId: vacationId
     },
     function(data, status){
-    	pending_requests();
-        load_page('approve');
+        load_page('vacations','approved');
     });
 }
 
-function remove_vacation(id,userId){
-    $.post("action.php?action=vacationRemove",
+function remove_vacation(vacationId,userId){
+    $.post("routes.php?action=cancelVacation",
     {
-        id: id,
-        user_id: userId
+        vacationId: vacationId,
+        userId: userId
     },
     function(data, status){
     	$('#confirm').modal('hide');
     	$('body').removeClass('modal-open');
 		$('.modal-backdrop').remove();
-    	pending_requests();
     	var page=$("ul.pagination li.active a").data('id');
-        load_page('approved',page);
+        load_page('vacations','approved',page);
     });
 }
 
@@ -166,12 +154,12 @@ function submitcheck(){
     }
 }
 
-function applyFilter(content){
+function applyFilter(){
     if(missingDateCheck()){
+        var action=$("ul#menu li.active").attr('id');
         var filter=$("input#from").val()+","+$("input#to").val();
         var page=$("ul.pagination li.active a").data('id');
-        pending_requests();
-        load_page(content,page,filter);
+        load_page('vacations',action,1,filter);
     }
 }
 
@@ -216,15 +204,14 @@ function adduser(){
     }
     else{
         event.preventDefault();
-        $.post("action.php?action=adduser",
+        $.post("routes.php?action=addUser",
         {
             name: name,
             days: days
         },
         function(data, status){
-            if(data==true){
-                pending_requests();
-                load_page('approved')
+            if(data=="Success"){
+                load_page('vacations','approved');
             }
             else{
                 $("#errortxt").text(data);
