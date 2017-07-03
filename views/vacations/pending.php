@@ -13,7 +13,7 @@
 			<span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
 			<input type="text" id="to" name="to" class="form-control">
 		</div>
-		<button type="button" class="btn btn-basic" onclick="applyFilter();"><span class="glyphicon glyphicon-filter"></span> Filter</button>
+		<button type="button" class="btn btn-basic" onclick="apply_filter();"><span class="glyphicon glyphicon-filter"></span> Filter</button>
 	</div>
 </div>
 <hr>

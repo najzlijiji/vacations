@@ -6,7 +6,13 @@ use Controllers\PagesController;
 
 class Router{
 
-	public function call($controller, $action){
+    /**
+     *
+     * Call controller 
+     * @param string $controller
+     * @param string $action
+     */
+	public function call(string $controller, string $action){
         require_once('controllers/' . $controller . '_controller.php');
 
         switch($controller) {
@@ -20,8 +26,7 @@ class Router{
                 $controller = new PagesController();
                 break;
       }
-
-        return $controller->{ $action }();
+        $controller->{ $action }();
     }
 }
 

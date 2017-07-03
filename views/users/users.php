@@ -8,7 +8,7 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">Enter details and Save</div>
 			<div class="panel-body">
-				<form name="date" id="date" class="form-Horizontal" onsubmit="adduser();">
+				<form name="date" id="date" class="form-Horizontal" onsubmit="add_user();">
 					<div class="form-group" id='nameerror'>
 						<label class="col-sm-2 control-label">Name</label>
 						<div class="col-sm-4">

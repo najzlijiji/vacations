@@ -8,7 +8,7 @@
 	<div class="panel panel-default">
 		<div class="panel-heading">Chose dates and click submit</div>
 		<div class="panel-body">
-			<form name="date" id="date" onsubmit="submitcheck();">
+			<form name="date" id="date" onsubmit="submit_check();">
 				<div class="form-group" id='names'>
 					<label for="names" class="control-label">User</label>
 					<select name="name" id="name" class="form-control">

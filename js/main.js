@@ -1,5 +1,5 @@
 $(document).ready(function(){
-    var urlVars=getUrlVars();
+    var urlVars=get_url_vars();
     if(typeof urlVars['controller'] !== 'undefined' && urlVars['action'] !== 'undefined'){
         var p='',
             f='';
@@ -36,7 +36,7 @@ function load_page(controller,action,p=false,f=false){
             window.history.pushState('?controller='+controller+'&action='+action+p+f, null, '?controller='+controller+'&action='+action+p+f);
             document.title=action+" "+controller;
             if($("#datepicker").length){
-                datePicker();
+                date_picker();
             }
         }
     });
@@ -70,7 +70,7 @@ function approve_vacation(vacationId,userId,page){
     },
     function(data, status){
         if(data=='Success'){
-            load_page('vacations','approved',page);
+            load_page('vacations','pending',page);
         }
         else{
             $("#errortxt").text(data);
@@ -86,7 +86,7 @@ function reject_vacation(vacationId){
         vacationId: vacationId
     },
     function(data, status){
-        load_page('vacations','approved');
+        load_page('vacations','pending');
     });
 }
 
@@ -113,7 +113,7 @@ $(document).on("click", "#removeButton", function () {
      $("#btnyes").attr("onclick","remove_vacation("+reId+","+userId+");");
 });
 
-function datePicker() {
+function date_picker() {
     var dateFormat = "yy-mm-dd",
       from = $("#from")
         .datepicker({
@@ -123,7 +123,7 @@ function datePicker() {
           numberOfMonths: 2
         })
         .on( "change", function() {
-          to.datepicker( "option", "minDate", getDate( this ) );
+          to.datepicker( "option", "minDate", get_date( this ) );
         }),
       to = $( "#to" ).datepicker({
         dateFormat: dateFormat,
@@ -132,10 +132,10 @@ function datePicker() {
         numberOfMonths: 2
       })
       .on( "change", function() {
-        from.datepicker( "option", "maxDate", getDate( this ) );
+        from.datepicker( "option", "maxDate", get_date( this ) );
       });
  
-    function getDate( element ) {
+    function get_date( element ) {
       var date;
       try {
         date = $.datepicker.parseDate( dateFormat, element.value );
@@ -147,15 +147,15 @@ function datePicker() {
     }
 };
 
-function submitcheck(){
-    if(missingDateCheck()){
+function submit_check(){
+    if(missing_date_check()){
         request_vacation($("#name").val(),$("#from").val(),$("#to").val());
         event.preventDefault();
     }
 }
 
-function applyFilter(){
-    if(missingDateCheck()){
+function apply_filter(){
+    if(missing_date_check()){
         var action=$("ul#menu li.active").attr('id');
         var filter=$("input#from").val()+","+$("input#to").val();
         var page=$("ul.pagination li.active a").data('id');
@@ -163,7 +163,7 @@ function applyFilter(){
     }
 }
 
-function missingDateCheck(){
+function missing_date_check(){
     if($("#from").val()=="" || $("#to").val()==""){
         if($("#from").val()==""){
             $("#fromerror").addClass("has-error");
@@ -184,7 +184,7 @@ function missingDateCheck(){
     }
 }
 
-function adduser(){
+function add_user(){
     var name = $("#name").val(),
         days = $("#days").val();
     if(name=="" || days==""){
@@ -221,7 +221,7 @@ function adduser(){
     }
 }
 
-function getUrlVars()
+function get_url_vars()
 {
     var vars = [], hash;
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
