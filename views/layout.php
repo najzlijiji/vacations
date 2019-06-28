@@ -22,7 +22,7 @@
                 <li id='request'><a href="#request" onclick="load_page('vacations','request');">Request Vacation</a></li>
                 <li id='pending'><a href="#pending" onclick="load_page('vacations','pending');">Approve Vacations <span class="badge"></span></a></li>
                 <li id='addnew'><a href="#addnew" onclick="load_page('users','addnew');">Add New User</a></li>
-                </ul><br>
+                </ul></br>
             </div>
             <div class="col-sm-10">
                 <div  id='content'>
